@@ -98,7 +98,12 @@ Capstone project/
 
 ```bash
 streamlit run app.py
-```
+
+Access in Browser
+
+Chatbot UI: http://localhost:8501
+
+Prometheus Metrics: http://localhost:8000
 
 ---
 
