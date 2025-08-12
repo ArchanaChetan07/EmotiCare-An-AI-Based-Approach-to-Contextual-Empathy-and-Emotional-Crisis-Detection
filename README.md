@@ -1,0 +1,1 @@
+# EmotiCare-An-AI-Based-Approach-to-Contextual-Empathy-and-Emotional-Crisis-Detection
