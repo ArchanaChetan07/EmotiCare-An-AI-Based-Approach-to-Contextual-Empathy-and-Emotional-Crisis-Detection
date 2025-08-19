@@ -1,7 +1,7 @@
 # EmotiCare – An AI-Based Approach to Contextual Empathy and Emotional Crisis Detection  
 
 ## 📌 Overview  
-**EmotiCare** is an AI-powered chatbot that detects emotional cues in text and responds with **contextual empathy** in real time.  
+**EmotiCare** is an AI-powered chatbot that detects emotional cues in text and responds with **contextual empathy**.  
 Unlike conventional mental health bots that rely on static scripts, EmotiCare integrates **multi-label emotion classification**, **transformer-based NLP**, and **graph-driven chatbot architectures** to deliver scalable, empathetic, and ethical emotional support.  
 
 The system leverages:  
@@ -126,9 +126,4 @@ Archana Suresh Patil – Applied Data Science, University of San Diego
 Sahil Wadhwa – Applied Data Science, University of San Diego
 
 ✨ EmotiCare demonstrates how psychology, ethical AI, and language science can combine to create emotionally intelligent and responsible digital companions.
-
-yaml
-Copy
-Edit
-
 ---
