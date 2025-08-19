@@ -65,36 +65,26 @@ Capstone_Project/
 ├── .env                          # API keys & environment variables
 ├── requirements.txt              # Project-level dependencies
 └── README.md
+
 📊 Modeling Approach
+
 Model	Macro F1	Micro F1	Hamming Loss	Notes
+
 Logistic Regression (Weighted, thr=0.65)	0.3182	0.3532	0.0541	Best overall; interpretable & efficient
+
 BERT Embeddings + Logistic Regression	0.3071	0.3410	0.0562	Better for nuanced emotions
+
 DistilBERT Pipeline (Top-2)	0.2984	0.3365	0.0578	Strong for fear & sadness
+
 BERT Embeddings + XGBoost	0.3010	0.3398	0.0567	Strong for anger detection
 
 🔑 Insight: Simpler models (weighted Logistic Regression) can rival transformer-based models in safety-critical, multi-label emotion tasks.
-
-⚙️ Setup & Installation
-Prerequisites
-Python 3.10+
-
-Virtual environment recommended
-
-Installation
-bash
-Copy
-Edit
-# Clone repo
-git clone https://github.com/ArchanaChetan07/EmotiCare-An-AI-Based-Approach-to-Contextual-Empathy-and-Emotional-Crisis-Detection.git
-cd EmotiCare-An-AI-Based-Approach-to-Contextual-Empathy-and-Emotional-Crisis-Detection
 
 # Install dependencies
 pip install -r requirements.txt
 ▶️ Running the App
 Start Chatbot (Streamlit)
-bash
-Copy
-Edit
+
 cd Chatbot_with_Web
 streamlit run app.py
 Access in Browser
@@ -103,6 +93,7 @@ Chatbot UI → http://localhost:8501
 Prometheus Metrics → http://localhost:8000
 
 📈 Results Summary
+
 Top Model: Weighted Logistic Regression w/ threshold tuning (0.65).
 
 Strengths: High recall for distress emotions (anger, fear, grief).
@@ -110,6 +101,7 @@ Strengths: High recall for distress emotions (anger, fear, grief).
 Limitations: Class imbalance + compute constraints limited deep model fine-tuning.
 
 🔮 Future Work
+
 Fine-tune DistilBERT / RoBERTa on integrated dataset.
 
 Implement ensemble modeling (LogReg + Transformers + XGBoost).
@@ -119,6 +111,7 @@ Collaborate with mental health organizations for real-world deployment.
 Expand to multimodal emotion detection (text + voice).
 
 👥 Authors
+
 Jason Tong – Applied Data Science, University of San Diego
 
 Archana Suresh Patil – Applied Data Science, University of San Diego
