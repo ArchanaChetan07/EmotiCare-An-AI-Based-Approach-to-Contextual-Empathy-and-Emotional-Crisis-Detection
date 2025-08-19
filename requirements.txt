@@ -1,0 +1,46 @@
+# 🔹 LangChain Ecosystem
+langchain
+langgraph
+langchain_core
+langchain_community
+langchain_groq
+langchain_openai
+
+# 🔹 Vector Stores and Search
+faiss-cpu
+tavily-python
+
+# 🔹 App UI
+streamlit
+
+# 🔹 Data Handling
+pandas
+numpy
+scikit-learn
+scipy
+python-dotenv
+tqdm
+
+# 🔹 NLP & Text Processing
+nltk
+emoji
+regex
+
+# 🔹 Visualization
+matplotlib
+seaborn
+wordcloud
+plotly
+
+# 🔹 Dimensionality Reduction
+umap-learn
+scikit-learn-intelex
+
+# 🔹 Clustering & Graph
+networkx
+python-louvain
+
+# 🔹 Jupyter Support
+jupyter
+ipykernel
+
