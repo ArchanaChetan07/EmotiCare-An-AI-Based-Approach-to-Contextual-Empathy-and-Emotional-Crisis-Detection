@@ -1,0 +1,42 @@
+[
+  {
+    "timestamp": "2025-08-04 22:49:12",
+    "text": "hi",
+    "joy": 0.6,
+    "sadness": 0.2,
+    "anger": 0.1,
+    "fear": 0.1
+  },
+  {
+    "timestamp": "2025-08-04 23:12:00",
+    "text": "Today I felt really happy and inspired after talking to a friend.",
+    "joy": 0.0,
+    "sadness": 0.0,
+    "anger": 0.0,
+    "fear": 0.0
+  },
+  {
+    "timestamp": "2025-08-04 23:22:52",
+    "text": " I am feeling very sad and wanna fight with my husband",
+    "joy": 0.0,
+    "sadness": 0.0,
+    "anger": 0.0,
+    "fear": 0.0
+  },
+  {
+    "timestamp": "2025-08-04 23:23:54",
+    "text": "if i kick on his butt i will be happy",
+    "joy": 0.0,
+    "sadness": 0.0,
+    "anger": 0.0,
+    "fear": 0.0
+  },
+  {
+    "timestamp": "2025-08-04 23:24:06",
+    "text": "if i kick on his butt i will be happy",
+    "joy": 0.0,
+    "sadness": 0.0,
+    "anger": 0.0,
+    "fear": 0.0
+  }
+]
