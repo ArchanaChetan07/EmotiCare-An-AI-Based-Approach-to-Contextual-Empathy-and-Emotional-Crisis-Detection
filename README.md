@@ -90,8 +90,6 @@ streamlit run app.py
 Access in Browser
 Chatbot UI → http://localhost:8501
 
-Prometheus Metrics → http://localhost:8000
-
 📈 Results Summary
 
 Top Model: Weighted Logistic Regression w/ threshold tuning (0.65).
