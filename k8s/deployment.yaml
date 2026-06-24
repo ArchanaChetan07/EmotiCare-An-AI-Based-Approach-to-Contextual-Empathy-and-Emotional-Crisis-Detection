@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: emoticare
+  namespace: emoticare
+  labels:
+    app: emoticare
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: emoticare
+  template:
+    metadata:
+      labels:
+        app: emoticare
+    spec:
+      containers:
+        - name: emoticare
+          image: $DOCKER_IMAGE
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8501
+          envFrom:
+            - secretRef:
+                name: emoticare-secrets
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+            limits:
+              memory: "1Gi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /_stcore/health
+              port: 8501
+            initialDelaySeconds: 60
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /_stcore/health
+              port: 8501
+            initialDelaySeconds: 30
+            periodSeconds: 10
