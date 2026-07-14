@@ -1,95 +1,137 @@
-# EmotiCare-An-AI-Based-Approach-to-Contextual-Empathy-and-Emotional-Crisis-Detection
+# EmotiCare — Contextual Empathy & Emotional Crisis Detection
 
-Python · NLP · BERT · Transformers · Hugging Face · scikit-learn · machine-learning · CI/CD · API. BERT multi-label F1; high distress recall; 85 files; CI+tests. Applied NLP for classification, generation, and language understanding pipelines.
+### Notebook research + LangGraph Streamlit app (journals, DistilBERT emotions, Docker/K8s)
 
-## Results (numbers)
+[![CI/CD](https://github.com/ArchanaChetan07/EmotiCare-An-AI-Based-Approach-to-Contextual-Empathy-and-Emotional-Crisis-Detection/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/ArchanaChetan07/EmotiCare-An-AI-Based-Approach-to-Contextual-Empathy-and-Emotional-Crisis-Detection/actions/workflows/ci-cd.yml)
+[![Python](https://img.shields.io/badge/Python-3.11-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+[![Docker](https://img.shields.io/badge/container-Dockerfile-2496ED?logo=docker&logoColor=white)](Dockerfile)
+[![Streamlit](https://img.shields.io/badge/UI-Streamlit-FF4B4B?logo=streamlit&logoColor=white)](Chatbot_with_Web/app.py)
 
-| Metric | Value |
+End-to-end EmotiCare stack for emotion-aware support work: **five notebooks** clean three corpora into gold CSVs and compare multi-label emotion models; a **Streamlit + LangGraph** app adds Groq chat, optional web tools, LLM-scored journaling with trend charts, a Hugging Face DistilBERT GoEmotions classifier module, Prometheus counters, and manifests for Docker + Kubernetes deploy.
+
+Companion write-up: `White Paper - EmotiCare.pdf`.
+
+---
+
+## Key Results
+
+| Metric | Value | Source |
+|---|---|---|
+| Gold rows — GoEmotions | **57,732** | `Data/Gold/goemotions_gold.csv` |
+| Gold rows — Facebook posts | **129,264** | `Data/Gold/facebook_gold.csv` |
+| Gold rows — CounselChat | **4,603** | `Data/Gold/counselchat_gold.csv` |
+| Best overall Macro F1 (multi-label) | **0.3133** @ thr. **0.65** | `notebook/05_Modeling.ipynb` (weighted LogReg) |
+| Matching Micro F1 / Hamming | **0.3487** / **0.0642** | same |
+| Distressed-label F1 examples (LogReg@0.65) | fear **0.3776**, sadness **0.3258**, grief **0.0845** | per-label table in `05_Modeling.ipynb` |
+| HF emotion model (app module) | `joeddav/distilbert-base-uncased-go-emotions-student` | `LLMS/emotion_classifier.py` |
+| Unit tests | **8** | `tests/test_emoticare.py` |
+| Deploy path | Dockerfile (8501) + `k8s/` (2 replicas) + CI build/push/deploy | `.github/workflows/ci-cd.yml` |
+
+> No committed crisis-precision/recall or empathy Likert scores — do not invent them. Crisis coverage in tests is **keyword set membership**, not a trained crisis model.
+
+---
+
+## Architecture
+
+```mermaid
+flowchart TB
+  NB[notebooks 01–05: raw→silver→gold→EDA→modeling] --> GOLD[Data/Gold CSVs]
+  UI[Streamlit: chat + journal + trends]
+  UI --> LG[LangGraph GraphBuilder]
+  LG --> GROQ[ChatGroq]
+  LG --> TOOLS[GoEmotions CSV search + Tavily]
+  UI --> J[journal_utils: LLM JSON emotion scores]
+  J --> JSON[journal_entries.json]
+  EC[emotion_classifier.py DistilBERT GoEmotions]
+  UI --> PROM[Prometheus counters :8000]
+  DOCKER[Dockerfile streamlit app] --> K8S[k8s Deployment x2 + Service + Secret]
+```
+
+**How it works:** modeling notebooks establish multi-label baselines on GoEmotions; the app path uses Groq for chat/journaling and can load a pretrained DistilBERT student for GoEmotions scores. Journal intensities are stored locally and plotted (`joy` / `sadness`). Optional CI pushes a container and applies Kubernetes manifests when Docker Hub secrets are configured.
+
+---
+
+## Tech Stack
+
+| Layer | Choice |
 |---|---|
-| Tracked repository files | **85** |
-| Python modules | **23** |
-| Notebooks | **5** |
-| Markdown docs | **1** |
-| CI workflows present | **Yes** |
-| Automated tests present | **Yes** |
-| Project highlights | **BERT multi-label F1; high distress recall; 85 files; CI+tests** |
+| Research | Jupyter (`notebook/01`…`05`) · scikit-learn · DistilBERT / SBERT experiments |
+| App | Streamlit · LangGraph · LangChain · Groq · Tavily |
+| Emotions | HF DistilBERT GoEmotions student · Groq JSON journal scoring |
+| Ops | Docker · Kubernetes YAML · Prometheus client · GitHub Actions CI/CD |
 
-## Tech stack
+---
 
-- **Primary language:** Jupyter Notebook
-- **Languages (GitHub):** Jupyter Notebook (5411945 bytes), Python (19273 bytes), Dockerfile (524 bytes)
-- **Focus area:** nlp
-- **Tooling keywords:** Python, machine-learning, CI/CD, API, Docker, Kubernetes, FastAPI, Prometheus, testing, automation, MLOps, LLM
+## Features
 
-## Architecture (logical)
+- Pipeline notebooks for CounselChat / Facebook / GoEmotions gold
+- Basic chatbot + tool-enabled LangGraph use cases
+- Journal save + emotion trend line chart
+- DistilBERT `predict_emotions()` helper (top-5 scores)
+- Healthcheck on Streamlit `/_stcore/health`
+- K8s probes, resource limits, secret-driven env
 
-\\	ext
-Inputs → Processing / models / agents → Evaluation & metrics → CI checks → Artifacts
-\
-## Engineering practices
+---
 
-1. Reproducible layout with clear module boundaries  
-2. Automated validation via CI and/or tests when present  
-3. Documentation that states measurable outcomes, not slogans  
-4. Skill surface aligned to common JD keywords: Python, machine learning, NLP/LLM, Kubernetes, Docker, observability, data pipelines  
+## Installation & Usage
 
-## Quick start
-
-\\ash
+```bash
 git clone https://github.com/ArchanaChetan07/EmotiCare-An-AI-Based-Approach-to-Contextual-Empathy-and-Emotional-Crisis-Detection.git
 cd EmotiCare-An-AI-Based-Approach-to-Contextual-Empathy-and-Emotional-Crisis-Detection
-# Install project requirements (see requirements.txt / pyproject.toml / environment files if present)
-# Run tests or main entrypoints documented in this repo
-\
-## Skills demonstrated
 
-Python · machine-learning · CI/CD · API design · testing · automation · Docker · Kubernetes · FastAPI · Prometheus · data-science · LLM · MLOps · software-engineering · benchmarking · observability
+python -m venv .venv
+source .venv/bin/activate   # Windows: .venv\Scripts\activate
+pip install -r Chatbot_with_Web/requirements.txt
+# DistilBERT path needs: pip install torch transformers
+```
 
-## License / notice
+```bash
+cd Chatbot_with_Web
+streamlit run app.py
+# or run prometheus-capable entry:
+python -m src.langgraphagenticai.main
+```
 
-See repository license file if present. Metrics above are derived from repository structure and previously published validation notes where available.
+```bash
+docker build -t emoticare .
+docker run -p 8501:8501 emoticare
+pytest tests/test_emoticare.py -q
+```
 
+---
 
-### Extended notes
+## Project Structure
 
-This section expands documentation for completeness: reproducibility, keyword coverage for Python, machine-learning, CI/CD, API, Docker, Kubernetes, FastAPI, Prometheus, testing, automation, MLOps, LLM, data-science, software-engineering, benchmarking, and observability practices used across the portfolio.
+```text
+├── Chatbot_with_Web/                 # Streamlit + LangGraph app
+│   ├── app.py
+│   └── src/langgraphagenticai/
+│       ├── main.py                   # chat + journal + Prometheus
+│       ├── LLMS/emotion_classifier.py
+│       ├── LLMS/groqllm.py
+│       ├── graph/graph_builder.py
+│       ├── tools/search_tool.py
+│       └── ui/streamlitui/           # loadui, display, journal_utils
+├── Data/Gold/                        # gold CSVs
+├── notebook/01…05_*.ipynb            # research pipeline
+├── k8s/                              # deployment, service, secret, namespace
+├── Dockerfile
+├── White Paper - EmotiCare.pdf
+├── tests/test_emoticare.py
+└── .github/workflows/ci-cd.yml
+```
 
+---
 
-### Extended notes
+## Future Improvements
 
-This section expands documentation for completeness: reproducibility, keyword coverage for Python, machine-learning, CI/CD, API, Docker, Kubernetes, FastAPI, Prometheus, testing, automation, MLOps, LLM, data-science, software-engineering, benchmarking, and observability practices used across the portfolio.
+- Wire `emotion_classifier.predict_emotions` into the journal path (today journaling uses Groq JSON)
+- Replace `eval()` on LLM JSON with `json.loads` + schema validation
+- Add a dedicated crisis classifier with held-out precision/recall in CI artifacts
+- Run pytest in the GitHub Actions `test` job (currently lint-focused)
 
+---
 
-### Extended notes
+## License
 
-This section expands documentation for completeness: reproducibility, keyword coverage for Python, machine-learning, CI/CD, API, Docker, Kubernetes, FastAPI, Prometheus, testing, automation, MLOps, LLM, data-science, software-engineering, benchmarking, and observability practices used across the portfolio.
-
-
-### Extended notes
-
-This section expands documentation for completeness: reproducibility, keyword coverage for Python, machine-learning, CI/CD, API, Docker, Kubernetes, FastAPI, Prometheus, testing, automation, MLOps, LLM, data-science, software-engineering, benchmarking, and observability practices used across the portfolio.
-
-
-### Extended notes
-
-This section expands documentation for completeness: reproducibility, keyword coverage for Python, machine-learning, CI/CD, API, Docker, Kubernetes, FastAPI, Prometheus, testing, automation, MLOps, LLM, data-science, software-engineering, benchmarking, and observability practices used across the portfolio.
-
-
-### Extended notes
-
-This section expands documentation for completeness: reproducibility, keyword coverage for Python, machine-learning, CI/CD, API, Docker, Kubernetes, FastAPI, Prometheus, testing, automation, MLOps, LLM, data-science, software-engineering, benchmarking, and observability practices used across the portfolio.
-
-
-### Extended notes
-
-This section expands documentation for completeness: reproducibility, keyword coverage for Python, machine-learning, CI/CD, API, Docker, Kubernetes, FastAPI, Prometheus, testing, automation, MLOps, LLM, data-science, software-engineering, benchmarking, and observability practices used across the portfolio.
-
-
-### Extended notes
-
-This section expands documentation for completeness: reproducibility, keyword coverage for Python, machine-learning, CI/CD, API, Docker, Kubernetes, FastAPI, Prometheus, testing, automation, MLOps, LLM, data-science, software-engineering, benchmarking, and observability practices used across the portfolio.
-
-
-### Extended notes
-
-This section expands documentation for completeness: reproducibility, keyword coverage for Python, machine-learning, CI/CD, API, Docker, Kubernetes, FastAPI, Prometheus, testing, automation, MLOps, LLM, data-science, software-engineering, benchmarking, and observability practices used across the portfolio.
+See repository license file if present.
