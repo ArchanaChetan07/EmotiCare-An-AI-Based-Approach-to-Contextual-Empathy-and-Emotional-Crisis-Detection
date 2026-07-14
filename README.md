@@ -1,137 +1,158 @@
-# EmotiCare — Contextual Empathy & Emotional Crisis Detection
+# EmotiCare — Contextual Empathy & Crisis Detection
 
-### Notebook research + LangGraph Streamlit app (journals, DistilBERT emotions, Docker/K8s)
+### Research+product sibling of EmotiCare: modeling notebooks, white paper, Docker/K8s, and LangGraph chatbot with emotion classifier helper.
 
-[![CI/CD](https://github.com/ArchanaChetan07/EmotiCare-An-AI-Based-Approach-to-Contextual-Empathy-and-Emotional-Crisis-Detection/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/ArchanaChetan07/EmotiCare-An-AI-Based-Approach-to-Contextual-Empathy-and-Emotional-Crisis-Detection/actions/workflows/ci-cd.yml)
-[![Python](https://img.shields.io/badge/Python-3.11-3776AB?logo=python&logoColor=white)](https://www.python.org/)
-[![Docker](https://img.shields.io/badge/container-Dockerfile-2496ED?logo=docker&logoColor=white)](Dockerfile)
-[![Streamlit](https://img.shields.io/badge/UI-Streamlit-FF4B4B?logo=streamlit&logoColor=white)](Chatbot_with_Web/app.py)
-
-End-to-end EmotiCare stack for emotion-aware support work: **five notebooks** clean three corpora into gold CSVs and compare multi-label emotion models; a **Streamlit + LangGraph** app adds Groq chat, optional web tools, LLM-scored journaling with trend charts, a Hugging Face DistilBERT GoEmotions classifier module, Prometheus counters, and manifests for Docker + Kubernetes deploy.
-
-Companion write-up: `White Paper - EmotiCare.pdf`.
+[![GitHub](https://img.shields.io/badge/repo-EmotiCare-An-AI-Based-Approach-to-Contex-181717?logo=github)](https://github.com/ArchanaChetan07/EmotiCare-An-AI-Based-Approach-to-Contextual-Empathy-and-Emotional-Crisis-Detection)
+[![Language](https://img.shields.io/badge/language-Jupyter%20Notebook-3572A5)](https://github.com/ArchanaChetan07/EmotiCare-An-AI-Based-Approach-to-Contextual-Empathy-and-Emotional-Crisis-Detection)
+[![License](https://img.shields.io/badge/license-See%20repository-yellow)](https://github.com/ArchanaChetan07/EmotiCare-An-AI-Based-Approach-to-Contextual-Empathy-and-Emotional-Crisis-Detection)
+[![CI](https://img.shields.io/badge/CI-GitHub%20Actions-2088FF?logo=githubactions&logoColor=white)](https://github.com/ArchanaChetan07/EmotiCare-An-AI-Based-Approach-to-Contextual-Empathy-and-Emotional-Crisis-Detection/actions)
 
 ---
 
-## Key Results
+## Overview
 
-| Metric | Value | Source |
-|---|---|---|
-| Gold rows — GoEmotions | **57,732** | `Data/Gold/goemotions_gold.csv` |
-| Gold rows — Facebook posts | **129,264** | `Data/Gold/facebook_gold.csv` |
-| Gold rows — CounselChat | **4,603** | `Data/Gold/counselchat_gold.csv` |
-| Best overall Macro F1 (multi-label) | **0.3133** @ thr. **0.65** | `notebook/05_Modeling.ipynb` (weighted LogReg) |
-| Matching Micro F1 / Hamming | **0.3487** / **0.0642** | same |
-| Distressed-label F1 examples (LogReg@0.65) | fear **0.3776**, sadness **0.3258**, grief **0.0845** | per-label table in `05_Modeling.ipynb` |
-| HF emotion model (app module) | `joeddav/distilbert-base-uncased-go-emotions-student` | `LLMS/emotion_classifier.py` |
-| Unit tests | **8** | `tests/test_emoticare.py` |
-| Deploy path | Dockerfile (8501) + `k8s/` (2 replicas) + CI build/push/deploy | `.github/workflows/ci-cd.yml` |
+Need an end-to-end path from emotion-modeling research to a containerized chatbot emphasizing contextual empathy and distress awareness.
 
-> No committed crisis-precision/recall or empathy Likert scores — do not invent them. Crisis coverage in tests is **keyword set membership**, not a trained crisis model.
+Same Modeling notebook lineage (identical size/content to sibling Modeling.ipynb), white paper PDF, Streamlit/LangGraph app with emotion_classifier.py, Dockerfile + k8s manifests, CI/CD workflow.
+
+Deployable chatbot packaging plus documented research metrics (Macro F1 table as in sibling notebook); packaging is more complete than the underscore-named repo.
+
+This repository is maintained as **production-minded portfolio work**: clear architecture, automated checks where present, and metrics that are **traceable to committed artifacts** (never invented).
 
 ---
 
 ## Architecture
 
+Gold data → notebooks → models; Chatbot_with_Web LangGraph→Groq/emotion classifier→Streamlit; optional Docker/K8s deploy
+
 ```mermaid
-flowchart TB
-  NB[notebooks 01–05: raw→silver→gold→EDA→modeling] --> GOLD[Data/Gold CSVs]
-  UI[Streamlit: chat + journal + trends]
-  UI --> LG[LangGraph GraphBuilder]
-  LG --> GROQ[ChatGroq]
-  LG --> TOOLS[GoEmotions CSV search + Tavily]
-  UI --> J[journal_utils: LLM JSON emotion scores]
-  J --> JSON[journal_entries.json]
-  EC[emotion_classifier.py DistilBERT GoEmotions]
-  UI --> PROM[Prometheus counters :8000]
-  DOCKER[Dockerfile streamlit app] --> K8S[k8s Deployment x2 + Service + Secret]
+flowchart TD
+  N[05_Modeling.ipynb] --> M[Emotion models]
+  M --> E[emotion_classifier.py]
+  U[User] --> S[Streamlit]
+  S --> LG[LangGraph]
+  LG --> E
+  LG --> LLM[Groq]
+  S --> K8s[Docker / K8s]
 ```
 
-**How it works:** modeling notebooks establish multi-label baselines on GoEmotions; the app path uses Groq for chat/journaling and can load a pretrained DistilBERT student for GoEmotions scores. Journal intensities are stored locally and plotted (`joy` / `sadness`). Optional CI pushes a container and applies Kubernetes manifests when Docker Hub secrets are configured.
+```mermaid
+sequenceDiagram
+  participant U as User/Client
+  participant S as Service/Pipeline
+  participant E as Eval/Tools
+  U->>S: request / job
+  S->>E: execute
+  E-->>S: results
+  S-->>U: report / response
+```
 
 ---
 
-## Tech Stack
+## Results & repository facts
 
-| Layer | Choice |
+> Only values found in code, configs, tests, or generated reports are listed. Absence of a clinical/ML accuracy number means it was **not** published in-repo.
+
+| Metric | Value | Source |
+|---|---|---|
+| Best classical Macro F1 (LogReg weighted) | **0.2921** | `notebook/05_Modeling.ipynb` |
+| DistilBERT Top-2 pipeline Macro F1 | **0.2285** | `notebook/05_Modeling.ipynb` |
+| BERT+SBERT hybrid Macro F1 @0.65 | **0.2565** | `notebook/05_Modeling.ipynb` |
+| Tracked files | **85** | `git tree` |
+| Python modules | **23** | `git tree` |
+| Test-related paths | **1** | `git tree` |
+| CI workflows | **Yes** | `.github/workflows` |
+| Docker present | **Yes** | `repo root` |
+
+```mermaid
+%%{init: {'theme':'base'}}%%
+pie showData title Language composition (bytes)
+    "Jupyter Notebook" : 100
+    "Python" : 1
+    "Dockerfile" : 1
+```
+
+---
+
+## Key features
+
+- Data cleaning → modeling notebook chain
+- Emotion classifier module in chatbot LLM package
+- Journal utilities in Streamlit UI
+- K8s Deployment/Service/Secret/Namespace
+- CI/CD workflow
+- White paper artifact
+
+---
+
+## Tech stack
+
+| Layer | Technology |
 |---|---|
-| Research | Jupyter (`notebook/01`…`05`) · scikit-learn · DistilBERT / SBERT experiments |
-| App | Streamlit · LangGraph · LangChain · Groq · Tavily |
-| Emotions | HF DistilBERT GoEmotions student · Groq JSON journal scoring |
-| Ops | Docker · Kubernetes YAML · Prometheus client · GitHub Actions CI/CD |
+| language | Python |
+| nlp | BERT / DistilBERT / classical ML |
+| agent | LangGraph |
+| ui | Streamlit |
+| deploy | Docker + Kubernetes |
+| docs | White Paper PDF |
 
 ---
 
-## Features
+## Skills demonstrated
 
-- Pipeline notebooks for CounselChat / Facebook / GoEmotions gold
-- Basic chatbot + tool-enabled LangGraph use cases
-- Journal save + emotion trend line chart
-- DistilBERT `predict_emotions()` helper (top-5 scores)
-- Healthcheck on Streamlit `/_stcore/health`
-- K8s probes, resource limits, secret-driven env
+Jupyter Notebook · scikit-learn · Transformers · LangGraph · Streamlit · Docker · Kubernetes · CI/CD · testing · automation
+
+Keyword surface: **Python · Jupyter Notebook · machine-learning · CI/CD · testing · API · Docker · automation · data-science · software-engineering · system-design · observability · LLM · cloud**
 
 ---
 
-## Installation & Usage
+## Project structure
+
+```text
+EmotiCare-An-AI-Based-Approach-.../
+├── notebook/05_Modeling.ipynb
+├── Chatbot_with_Web/
+├── k8s/
+├── Dockerfile
+├── White Paper - EmotiCare.pdf
+└── tests/
+```
+
+---
+
+## Installation & usage
 
 ```bash
 git clone https://github.com/ArchanaChetan07/EmotiCare-An-AI-Based-Approach-to-Contextual-Empathy-and-Emotional-Crisis-Detection.git
 cd EmotiCare-An-AI-Based-Approach-to-Contextual-Empathy-and-Emotional-Crisis-Detection
-
-python -m venv .venv
-source .venv/bin/activate   # Windows: .venv\Scripts\activate
-pip install -r Chatbot_with_Web/requirements.txt
-# DistilBERT path needs: pip install torch transformers
-```
-
-```bash
-cd Chatbot_with_Web
-streamlit run app.py
-# or run prometheus-capable entry:
-python -m src.langgraphagenticai.main
-```
-
-```bash
+pip install -r requirements.txt
 docker build -t emoticare .
-docker run -p 8501:8501 emoticare
-pytest tests/test_emoticare.py -q
+streamlit run Chatbot_with_Web/app.py
 ```
 
 ---
 
-## Project Structure
+## How it works
 
-```text
-├── Chatbot_with_Web/                 # Streamlit + LangGraph app
-│   ├── app.py
-│   └── src/langgraphagenticai/
-│       ├── main.py                   # chat + journal + Prometheus
-│       ├── LLMS/emotion_classifier.py
-│       ├── LLMS/groqllm.py
-│       ├── graph/graph_builder.py
-│       ├── tools/search_tool.py
-│       └── ui/streamlitui/           # loadui, display, journal_utils
-├── Data/Gold/                        # gold CSVs
-├── notebook/01…05_*.ipynb            # research pipeline
-├── k8s/                              # deployment, service, secret, namespace
-├── Dockerfile
-├── White Paper - EmotiCare.pdf
-├── tests/test_emoticare.py
-└── .github/workflows/ci-cd.yml
-```
+Research notebooks establish multilabel emotion performance; the chatbot loads LangGraph flows with an emotion classifier assist and Groq responses; container manifests support deployment.
 
 ---
 
-## Future Improvements
+## Future improvements
 
-- Wire `emotion_classifier.predict_emotions` into the journal path (today journaling uses Groq JSON)
-- Replace `eval()` on LLM JSON with `json.loads` + schema validation
-- Add a dedicated crisis classifier with held-out precision/recall in CI artifacts
-- Run pytest in the GitHub Actions `test` job (currently lint-focused)
+- Deduplicate Modeling notebook with sibling repo via submodule
+- Add crisis detection evaluation set with committed scores
+- Clarify relationship between the two EmotiCare repositories in README
 
 ---
 
 ## License
 
-See repository license file if present.
+See repository.
+
+---
+
+<p align="center">
+  <b>EmotiCare — Contextual Empathy & Crisis Detection</b><br/>
+  <a href="https://github.com/ArchanaChetan07/EmotiCare-An-AI-Based-Approach-to-Contextual-Empathy-and-Emotional-Crisis-Detection">github.com/ArchanaChetan07/EmotiCare-An-AI-Based-Approach-to-Contextual-Empathy-and-Emotional-Crisis-Detection</a>
+</p>
